@@ -4,7 +4,7 @@ This repository contains the code for the paper "FLASH: A Fast and Reliable Shap
 
 
 ## FLASH Overview
-FLASH is a framework supporting model-agnostic interpretation via fast and reliable Shapley value approximation. FLASH employs a two-phase evaluation process. First, FLASH performs layer-wise evaluation to generate unique coalitions in a pattern growth manner. Second, FLASH conducts feature-wise evaluation to focus on the top-𝑘 features with the highest evaluation variances. Moreover, FLASH balances the trade-off between evaluation efficiency and effectiveness by dynamically updating the allocation of coalition evaluations in the two phases, leading to more efficient and reliable Shapley value approximation.
+FLASH is a framework supporting model-agnostic interpretation via fast and reliable Shapley value approximation. It employs a two-phase evaluation process: first, a layer-wise evaluation to generate unique coalitions in a pattern growth manner, followed by a feature-wise evaluation that focuses on the top-𝑘 features with the highest variances. FLASH also dynamically allocates the number of evaluations, ensuring a more efficient and reliable Shapley value approximation.
 
 ## Features
 - Model-agnostic 
@@ -13,10 +13,24 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 
   
 ## Implementation
-
-## Baseline Setup
-
-## 安装
 1. 克隆仓库：
    ```bash
    git clone https://github.com/username/repository.git
+
+## Baseline Setup
+- MC: The Monte Carlo method (MC) approximates the Shapley value by randomly sampling permutations of features. In the experiments, MC serves as a benchmark for approximating the Shapley value.
+- CC: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- CCN: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- S-SVARM: It is designed to approximate the Shapley value by sampling coalitions without relying on marginal contributions. <[S-SVARM method](https://github.com//kolpaczki//Approximating-the-Shapley-Value-without-Marginal-Contributions)>
+  
+
+## Repository Structure
+### Folders
+- Compared_algorithm: the 
+- Game:
+- Global: 
+- Structure: Maintain the data structures for FLASH. 
+
+### Files
+- Game/GameClass.java: The global initialization and experimental setup.
+- Gloval/Info.java: All settings related to determinism.
