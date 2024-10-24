@@ -16,8 +16,7 @@ public class Info {
 
     //---------------------------------------------Dataset setting-----------------------------------------------------
 
-    //数据集文件的根目录
-    public static final String ROOT = "D:/DiskOfJingxuan/Code/Interpretability/ShapleyValueApproximation-test/ShapleyValueApproximation-test-0911/Dataset/";
+    public static final String ROOT = "D:/Code/Interpretability/ShapleyValueApproximation-test/ShapleyValueApproximation/Dataset/";
 
     public static final String benchmark_path = ROOT + "benchmark_" + model_name + "_" +  num_of_features +"_"+
             num_of_features * 50000 + ".tex";
