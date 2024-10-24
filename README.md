@@ -35,10 +35,10 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 
 ## Repository Structure
 ### Repository Root Directory
-- Dataset: A directory for datasets used by this project.
-- Model: A directory containing scripts to preprocess the dataset, train and deploy the model.
-- src: The directory where the project's source code is stored.
-- pom.xml: The Maven project configuration file that defines project dependencies, build settings, and other metadata.
+- `Dataset`: A directory for datasets used by this project.
+- `Model`: A directory containing scripts to preprocess the dataset, train and deploy the model.
+- `src`: The directory where the project's source code is stored.
+- `pom.xml`: The Maven project configuration file that defines project dependencies, build settings, and other metadata.
 
 ### Folders
 - `src/main/java/AlgoVersion`: A folder houseing all the algorithm-related code for this project. 
@@ -47,12 +47,12 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 - `src/main/java/Structure`: A folder dedicated to the data structures used in FLASH. 
 
 ### Files
-- `main.java`: All algorithms are implemented in 'main.java'
+- `main.java`: All algorithms are implemented in 'main.java'.
 - `Game/GameClass.java`: The global initialization and experimental setup.
 - `Global/Info.java`: All settings related to determinism.
 
 - ## Baseline Setup
-- MC: The Monte Carlo method (MC) approximates the Shapley value by randomly sampling permutations of features. In the experiments, MC serves as a benchmark for approximating the Shapley value.
-- CC: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
-- CCN: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
-- S-SVARM: It is designed to approximate the Shapley value by sampling coalitions without relying on marginal contributions. <[S-SVARM method](https://github.com//kolpaczki//Approximating-the-Shapley-Value-without-Marginal-Contributions)>
+- `MC`: The Monte Carlo method (MC) approximates the Shapley value by randomly sampling permutations of features. In the experiments, MC serves as a benchmark for approximating the Shapley value.
+- `CC`: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- `CCN`: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- `S-SVARM`: It is designed to approximate the Shapley value by sampling coalitions without relying on marginal contributions. <[S-SVARM method](https://github.com//kolpaczki//Approximating-the-Shapley-Value-without-Marginal-Contributions)>
