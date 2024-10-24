@@ -11,7 +11,7 @@ public class main_scalability
         alg.scaleTest();   //【Scalability test】
     }
 
-       //TODO 【Scalability test】 可以变换feature的个数，
+       //TODO 【Scalability test】 
     private void scaleTest() {
 
         MC_algorithm mc = new MC_algorithm();
