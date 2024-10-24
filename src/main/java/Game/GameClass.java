@@ -27,8 +27,6 @@ public class GameClass {
     public int start_level;
     public int end_level;
 
-
-    //TODO [版本2] 全局参数的初始化
     public void gameInit(boolean gene_weight, String modelName) {
         String path;
         String benchmark_path;
@@ -148,7 +146,7 @@ public class GameClass {
         this.end_level = this.num_features - 1;
     }
 
-    //TODO Utility function
+    // Utility function
     public double gameValue(String modelName, ArrayList<Integer> subset){
         double value = 0;
         switch (modelName) {
