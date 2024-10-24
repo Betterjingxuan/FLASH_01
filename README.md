@@ -35,10 +35,9 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 
 ## Repository Structure
 ### Repository Root Directory
+- Dataset: A directory for datasets used by this project.
+- Model: A directory containing scripts to preprocess the dataset, train and deploy the model.
 - src: The directory where the project's source code is stored.
-- dataset: A directory for datasets used by this project.
-- command: A directory containing scripts for running the application or other related commands.
-- nohup.out: A log file capturing the output of a command run in the background using nohup.
 - pom.xml: The Maven project configuration file that defines project dependencies, build settings, and other metadata.
 
 ### Folders
