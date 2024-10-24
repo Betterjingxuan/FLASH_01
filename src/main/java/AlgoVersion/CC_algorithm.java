@@ -16,7 +16,7 @@ public class CC_algorithm {
     double halfSum;  //for Voting game
     int num_samples;
 
-    // TODO [CC Algorithm]: approximate the shapley value by complementary contributions
+    // [CC Algorithm]: approximate the shapley value by complementary contributions
     public void CC(boolean gene_weight, String model){
         ShapMatrixEntry[][] sv_values = new ShapMatrixEntry[Info.timesRepeat][];
         GameClass game = new GameClass();
