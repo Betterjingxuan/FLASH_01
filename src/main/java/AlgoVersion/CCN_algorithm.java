@@ -29,13 +29,13 @@ public class CCN_algorithm {
         initialization_eva(game, gene_weight, model);
 
         long ave_runtime = 0;
-        double ave_error_max = 0; //计算最大误差
+        double ave_error_max = 0; 
         double ave_error_ave = 0;
 //        double ave_mse = 0;
 
         for(int i=0; i< Info.timesRepeat; i++) {
             Random random = new Random(game.seedSet[i]);
-            int total_evaluateNum = this.total_num_evaluations;  //因为一个sample需要predict两次
+            int total_evaluateNum = this.total_num_evaluations;  
 
             //3）计算shapley value
             long time_1 = System.currentTimeMillis();
@@ -45,8 +45,8 @@ public class CCN_algorithm {
 
             //4）计算误差
             Comparer comparator = new Comparer();
-            double error_ave = comparator.computeAverageError(shap_matrix, this.exact, this.num_features);  //计算平均误差
-            double error_max = comparator.computeMaxError(shap_matrix, this.exact, this.num_features); //计算最大误差
+            double error_ave = comparator.computeAverageError(shap_matrix, this.exact, this.num_features); 
+            double error_max = comparator.computeMaxError(shap_matrix, this.exact, this.num_features); 
 //            double mse = comparator.computeMSE(shap_matrix, this.exact, this.num_features);
             ave_runtime += time_2 - time_1;
             ave_error_max += error_max;
@@ -56,7 +56,6 @@ public class CCN_algorithm {
             System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
         }
 
-        // 5）打印输出结果
         System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " + ave_error_max/Info.timesRepeat);
         System.out.println("CCN time : " + (ave_runtime * 0.001)/ Info.timesRepeat );  //+ "S"
 //        HashMap<Integer, double[]> s = new HashMap<>();
@@ -72,13 +71,13 @@ public class CCN_algorithm {
         Comparer comparator = new Comparer();
 
         long ave_runtime = 0;
-        double ave_error_max = 0; //计算最大误差
+        double ave_error_max = 0; 
         double ave_error_ave = 0;
 //        double ave_mse = 0;
 
         for(int i=10; i< Info.timesRepeat; i++) {
             Random random = new Random(game.seedSet[i]);
-            int total_evaluateNum = this.total_num_evaluations;  //因为一个sample需要predict两次
+            int total_evaluateNum = this.total_num_evaluations; 
 
             //3）计算shapley value
             long time_1 = System.currentTimeMillis();
@@ -88,8 +87,8 @@ public class CCN_algorithm {
             sv_values[i] = shap_matrix;
 
             //4）计算误差
-            double error_ave = comparator.computeAverageError(shap_matrix, this.exact, this.num_features);  //计算平均误差
-            double error_max = comparator.computeMaxError(shap_matrix, this.exact, this.num_features); //计算最大误差
+            double error_ave = comparator.computeAverageError(shap_matrix, this.exact, this.num_features); 
+            double error_max = comparator.computeMaxError(shap_matrix, this.exact, this.num_features);
 //            double mse = comparator.computeMSE(shap_matrix, this.exact, this.num_features);
             ave_runtime += time_2 - time_1;
             ave_error_max += error_max;
@@ -100,7 +99,7 @@ public class CCN_algorithm {
         }
 
         double acv = comparator.computeACV(sv_values, this.num_features);
-        // 5）打印输出结果
+       
         System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " + ave_error_max/Info.timesRepeat);
         System.out.println("average cv :" + acv);
         System.out.println("CCN time : " + (ave_runtime * 0.001)/ Info.timesRepeat );  //+ "S"
