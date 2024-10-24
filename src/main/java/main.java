@@ -1,4 +1,4 @@
-import Global.Info;
+import config.Info;
 import AlgoVersion.*;
 
 public class main
@@ -7,30 +7,23 @@ public class main
     {
         main alg = new main();
         alg.evaluationTest();
-//        alg.otherBaseline();
     }
     private void evaluationTest() {
 
-        MC_algorithm mc = new MC_algorithm();
-        mc.MC_Shap(Info.is_gene_weight,Info.model_name);   // Benchmark
+        FLASH_algorithm alg_1 = new FLASH_algorithm();
+        alg_1.FLASH(Info.is_gene_weight, Info.model_name);
 
-        CC_algorithm cc = new CC_algorithm();
-        cc.CC_Shap(Info.is_gene_weight, Info.model_name);  //CC-SIGMOD-2023
+        CC_algorithm alg_2 = new CC_algorithm();
+        alg_2.CC(Info.is_gene_weight, Info.model_name);  //CC-SIGMOD-2023
 
-        CCN_algorithm ccn = new CCN_algorithm();
-        ccn.CCN_Shap(Info.is_gene_weight, Info.model_name);   //CCN-SIGMOD-2023
+        CCN_algorithm alg_3 = new CCN_algorithm();
+        alg_3.CCN(Info.is_gene_weight, Info.model_name);   //CCN-SIGMOD-2023
 
-        S_SVARM ssvarm = new S_SVARM();
-        ssvarm.SSVARM_Shap(Info.is_gene_weight, Info.model_name); //S_SVARM-AAAI-2024
-//
-        FLASH_algorithm flash = new FLASH_algorithm();
-        flash.FLASH_Shap(Info.is_gene_weight, Info.model_name);
-    }
+        S_SVARM alg_4 = new S_SVARM();
+        alg_4.SSVARM(Info.is_gene_weight, Info.model_name); //S_SVARM-AAAI-2024
 
-    private void otherBaseline(){
-        MCN_algorithm mcnAlgorithm = new MCN_algorithm();
-        mcnAlgorithm.MCN_scale(Info.is_gene_weight, Info.model_name);
-
+        MC_algorithm alg_5 = new MC_algorithm();
+        alg_5.MC(Info.is_gene_weight,Info.model_name);   // Benchmark
     }
 
 }

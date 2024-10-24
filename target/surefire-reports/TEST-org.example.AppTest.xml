@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.example.AppTest" time="0.01" tests="1" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="java.specification.version" value="11"/>
+    <property name="sun.cpu.isalist" value=""/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/changshuo/shapely/ShapleyValueApproximation-test/target/test-classes:/home/changshuo/shapely/ShapleyValueApproximation-test/target/classes:/home/changshuo/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/changshuo/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/changshuo/.m2/repository/com/squareup/okhttp3/okhttp/4.9.1/okhttp-4.9.1.jar:/home/changshuo/.m2/repository/com/squareup/okio/okio/2.8.0/okio-2.8.0.jar:/home/changshuo/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.0/kotlin-stdlib-common-1.4.0.jar:/home/changshuo/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.4.10/kotlin-stdlib-1.4.10.jar:/home/changshuo/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/home/changshuo/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar:/home/changshuo/.m2/repository/com/opencsv/opencsv/5.5.2/opencsv-5.5.2.jar:/home/changshuo/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar:/home/changshuo/.m2/repository/org/apache/commons/commons-text/1.9/commons-text-1.9.jar:/home/changshuo/.m2/repository/commons-beanutils/commons-beanutils/1.9.4/commons-beanutils-1.9.4.jar:/home/changshuo/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/home/changshuo/.m2/repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar:/home/changshuo/.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar:"/>
+    <property name="java.vm.vendor" value="Ubuntu"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://ubuntu.com/"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.vm.specification.version" value="11"/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-11-openjdk-amd64/lib"/>
+    <property name="sun.java.command" value="/home/changshuo/shapely/ShapleyValueApproximation-test/target/surefire/surefirebooter6805388558599471419.jar /home/changshuo/shapely/ShapleyValueApproximation-test/target/surefire 2024-06-30T09-42-20_422-jvmRun1 surefire6985071876448461652tmp surefire_07964988636846880648tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/changshuo/shapely/ShapleyValueApproximation-test/target/test-classes:/home/changshuo/shapely/ShapleyValueApproximation-test/target/classes:/home/changshuo/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/changshuo/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/changshuo/.m2/repository/com/squareup/okhttp3/okhttp/4.9.1/okhttp-4.9.1.jar:/home/changshuo/.m2/repository/com/squareup/okio/okio/2.8.0/okio-2.8.0.jar:/home/changshuo/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.0/kotlin-stdlib-common-1.4.0.jar:/home/changshuo/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.4.10/kotlin-stdlib-1.4.10.jar:/home/changshuo/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/home/changshuo/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar:/home/changshuo/.m2/repository/com/opencsv/opencsv/5.5.2/opencsv-5.5.2.jar:/home/changshuo/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar:/home/changshuo/.m2/repository/org/apache/commons/commons-text/1.9/commons-text-1.9.jar:/home/changshuo/.m2/repository/commons-beanutils/commons-beanutils/1.9.4/commons-beanutils-1.9.4.jar:/home/changshuo/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/home/changshuo/.m2/repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar:/home/changshuo/.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/changshuo"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-04-16"/>
+    <property name="java.home" value="/usr/lib/jvm/java-11-openjdk-amd64"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/changshuo/shapely/ShapleyValueApproximation-test"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="surefire.real.class.path" value="/home/changshuo/shapely/ShapleyValueApproximation-test/target/surefire/surefirebooter6805388558599471419.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="11.0.23+9-post-Ubuntu-1ubuntu120.04.2"/>
+    <property name="user.name" value="changshuo"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="5.4.0-182-generic"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/home/changshuo/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-lts"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="11.0.23"/>
+    <property name="user.dir" value="/home/changshuo/shapely/ShapleyValueApproximation-test"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.library.path" value="/usr/local/cuda-11.3/lib64:/usr/local/cuda-11.3/lib64::/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Ubuntu"/>
+    <property name="java.vm.version" value="11.0.23+9-post-Ubuntu-1ubuntu120.04.2"/>
+    <property name="java.specification.maintenance.version" value="2"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="55.0"/>
+  </properties>
+  <testcase name="testApp" classname="org.example.AppTest" time="0.001"/>
+</testsuite>
