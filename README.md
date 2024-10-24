@@ -4,8 +4,8 @@ This repository contains the code for the paper "FLASH: A Fast and Reliable Shap
 ![Diagram of Shapley Value](figure/Introduction2.0.jpg "Shapley Value Approximation Diagram")
 
 ## FLASH Overview
-![Overview of FLASH](figure/OverviewMethod.jpg "Overview of FLASH")
 FLASH is a framework supporting model-agnostic interpretation via fast and reliable Shapley value approximation. It employs a two-phase evaluation process: first, a layer-wise evaluation to generate unique coalitions in a pattern growth manner, followed by a feature-wise evaluation that focuses on the top-𝑘 features with the highest variances. FLASH also dynamically allocates the number of evaluations, ensuring a more efficient and reliable Shapley value approximation.
+![Overview of FLASH](figure/OverviewMethod.jpg "Overview of FLASH")
 
 ## Features
 - Model-agnostic 
