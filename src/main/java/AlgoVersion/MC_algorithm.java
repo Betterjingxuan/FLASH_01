@@ -12,7 +12,7 @@ public class MC_algorithm {
     double[] exact;   // the exact shapley value
     int num_samples;
 
-    // TODO [MC Algorithm]: approximate the shapley value by Monte Carlo sampling
+    // [MC Algorithm]: approximate the shapley value by Monte Carlo sampling
     public void MC(boolean gene_weight, String model){
 
         //Initialization
