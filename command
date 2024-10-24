@@ -1,1 +1,0 @@
-nohup mvn exec:java -Dexec.mainClass="org.example.Main_3" >health_CC_500.txt 2>&1 &
