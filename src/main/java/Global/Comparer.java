@@ -49,31 +49,35 @@ public class Comparer {
         return error_ave;
     }
 
+
+    //TODO 跳过第二个feature
+    public double computeMaxError_2(double[] shap_matrix, double[] exact) {
+        double error_max = 0;  //误差总量，最后除以特征数
+        for(int i=0; i<2; i++){
+            if(exact[i] != 0){
+                error_max = Math.max(Math.abs((shap_matrix[i] - exact[i]) / exact[i]), error_max);
+//                System.out.println(i + "-" + shap_matrix[i] + "\t" + exact[i] + "\t" + Math.abs((shap_matrix[i] - exact[i]) / exact[i]) + "\t");
+            }
+        }
+        for(int i=3; i<exact.length; i++){
+            if(exact[i] != 0){
+                error_max = Math.max(Math.abs((shap_matrix[i] - exact[i]) / exact[i]), error_max);
+//                System.out.println(i + "-" + shap_matrix[i] + "\t" + exact[i] + "\t" + Math.abs((shap_matrix[i] - exact[i]) / exact[i]) + "\t");
+            }
+        }
+        return error_max;
+    }
+
     //TODO 计算最大误差 (Voting game & Airport game)
     public double computeMaxError(double[] shap_matrix, double[] exact) {
         double error_max = 0;  //误差总量，最后除以特征数
         for(int i=0; i<exact.length; i++){
             if(exact[i] != 0){
                 error_max = Math.max(Math.abs((shap_matrix[i] - exact[i]) / exact[i]), error_max);
-//                System.out.println(i + "-" + shap_matrix[i] + "-" + exact[i] + "-" + Math.abs((shap_matrix[i] - exact[i]) / exact[i]) + "\t");
+//                System.out.println(i + "-" + shap_matrix[i] + "\t" + exact[i] + "\t" + Math.abs((shap_matrix[i] - exact[i]) / exact[i]) + "\t");
             }
         }
         return error_max;
-    }
-
-    public double computeMSE(double[] shap_matrix, double[] exact, int num_of_features) {
-        double mse_ave = 0;  //误差总量，最后除以特征数
-        int total_features = num_of_features;
-        for(int i=0; i<exact.length; i++){
-            if(exact[i] !=0){
-                mse_ave += Math.pow(shap_matrix[i] - exact[i], 2);
-            }
-            else{
-                total_features --;
-            }
-        }
-        mse_ave = mse_ave / total_features;
-        return mse_ave;
     }
 
     public double computeMSE(ShapMatrixEntry[] shap_matrix, double[] exact, int num_of_features) {
@@ -147,5 +151,6 @@ public class Comparer {
         }
         return acv_count / featureNum;
     }
+
 
 }

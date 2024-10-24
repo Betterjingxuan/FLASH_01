@@ -2,8 +2,6 @@ package Global;
 
 import Game.GameClass;
 import structure.ShapMatrixEntry;
-
-import javax.sound.sampled.Line;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -18,334 +16,16 @@ public class Allocation {
     public double total_weights;
     public int total_samples; //采样的总个数(maybe与设定的不相等)
 
-    //分配方案：每个网格的采样数量（每层的网格）
-    public int[] allocations; //个数等于网格数量
-    public int level_samples; //某一层采样的总个数
-
     public double check_weight;   //最后阶段方差计算的比例
     public double number_weight;  //在样本分配时，数量特征所占的比例
     public double variance_weight; //在样本分配时，方差特征所占的比例
 
-
-    // 默认构造函数
-    public Allocation() {
-    }
 
     public Allocation(GameClass game){
         this.check_weight = game.check_weight;
         this.number_weight = game.number_weight;
         this.variance_weight = game.variance_weight;
     }
-
-/* 因为Allocation有两层含义，整体上给每层分配样本 & 每层给网格分配样本，所以在调用方法时再初始化变量更合适 */
-
-//    public Allocation(){
-//        this.allocations = new int[Info.num_of_grids];
-////        this.total_samples = Info.num_of_samples;
-//    }
-
-    //TODO 【版本2】简单分配（每个网格取多个）
-    //基本原则：每个网格采样多个，若出现网格数量为0时，把当前分配到的样本数，直接转嫁给最大数量的网格（网格数量按降序排列）
-    // 有点笨的方法，现在不管网格中含有几个，都是抽样后放回。如果网格只有1个值，然后这个值就会被反复抽
-    // level 表示传入当前层存储的元素，包含的特征数量
-    // level_samples: 这一层采样的个数 (m)
-    // total_samples ：level_samples +  补偿采样（m*level/(n-level)）,n是特征的数量  （这样补有点多）
-    //
-    public void checkAndAllocate_transfer_2(int level, Grid grid, int level_samples) {
-
-        this.allocations = new int[Info.num_of_grids];
-        //compensation_samples 补偿的采样数量  // Math.round() 四舍五入地返回最接近的整数
-        int compensation_samples = Math.round(1.0f * level_samples * level / (Info.num_of_features - level));  //补太多了
-        this.level_samples += compensation_samples;
-//        int compensation_samples = level * m;   //第几层(隐藏了几个特征)就补几个
-        //每个网格中分配的采样数
-        int oneGrid_samples = Math.round( 1.0f * (level_samples + compensation_samples) / Info.num_of_grids) ;
-
-        //1)检查是否需要重新分配
-        int ZoneCount = 0;  //计数器，计数空网格的个数
-        for (ArrayList<FeatureSubset> oneGrid : grid.grids_row) {
-            //2)检查是否有网格为空,计数
-            if (oneGrid.size() == 0) {
-                ZoneCount ++;
-            }
-        }
-
-        //2）如果真的有空网格，就需要把样本转移给其他的网格
-        //情况1：无空网格，每个网格取相同的样本数量
-        if(ZoneCount == 0){
-            Arrays.fill(this.allocations, oneGrid_samples);
-        }
-        //情况2：有空网格，把样本转移给其他的网格 (ZoneCount > 0)
-        else{
-            //Step1 : grid_size 用于存储每个网格对应的数量
-            List<Integer[]> grid_size_set = new ArrayList<>();
-            for(int index_g = 0; index_g<grid.grids_row.length; index_g++){  //ind 是网格对应的下标
-                ArrayList<FeatureSubset> oneGrid = grid.grids_row[index_g];
-                if(oneGrid.size() >0){   //只有大于0的才可以加入候补集中，用于顶替采样
-                    Integer[] temp = {index_g , oneGrid.size()};
-                    grid_size_set.add(temp);  //(gridID, 存放元素的数量)
-                }
-            }
-            //Step2 : 排序
-//            Collections.sort(grid_size_set, new Comparator<Integer[]>() {
-            grid_size_set.sort(new Comparator<Integer[]>() {
-                @Override
-                public int compare(Integer[] array1, Integer[] array2) {
-                    // 以数组的第2个元素作为比较依据，降序排列 (按存放元素的数量)
-                    return array2[1].compareTo(array1[1]);
-                }
-            });  // 排序后的list就是  (第1大的网格ID，数量），(第2大的网格的ID，数量)
-
-            //3) 重新分配
-            //【版本2】：遍历每一层，遇到了空网格的就找最大的出来顶替
-            int index_transfer = 0;
-            for(int ind = 0; ind<grid.grids_row.length; ind++){
-                ArrayList<FeatureSubset> oneGrid = grid.grids_row[ind];
-                if(oneGrid.size() != 0){  //有值的，可以直接取
-                    this.allocations[ind] += oneGrid_samples;
-                }
-                else {
-                    //找到替换的下标
-                    int replace_index = grid_size_set.get(index_transfer)[0];
-                    //把采样个数加上
-                    this.allocations[replace_index] += oneGrid_samples;
-                    //条件判断，对index_transfer赋值；
-                    if(index_transfer < grid_size_set.size()-1){
-                        index_transfer ++;
-                    }
-                    else{
-                        index_transfer = 0;
-                    }
-                }
-            }
-        }
-    }
-
-    //TODO 【版本3】 新增判断，采样数 > 实际数量
-    //基本原则：每个网格采样多个，若出现网格数量为0时，把当前分配到的样本数，直接转嫁给最大数量的网格（网格数量按降序排列）
-    // 有点笨的方法，现在不管网格中含有几个，都是抽样后放回。如果网格只有1个值，然后这个值就会被反复抽
-    // level 表示传入当前层存储的元素，包含的特征数量
-    // level_samples: 这一层采样的个数 (m)
-    // total_samples ：level_samples +  补偿采样（m*level/(n-level)）,n是特征的数量  （这样补有点多）
-    //
-    public void checkAndAllocate_transfer_3(int level, Grid grid, int level_samples) {
-
-        this.allocations = new int[Info.num_of_grids]; //在一层上，给每个网格分配的个数
-
-        //compensation_samples 补偿的采样数量  // Math.round() 四舍五入地返回最接近的整数
-        int compensation_samples = Math.round(1.0f * level_samples * level / (Info.num_of_features - level));  //补太多了
-        this.level_samples += compensation_samples;
-//        int compensation_samples = level * m;   //第几层(隐藏了几个特征)就补几个
-        //每个网格中分配的采样数
-        int oneGrid_samples = Math.round( 1.0f * (level_samples + compensation_samples) / Info.num_of_grids) ;
-
-//        // 1）检查采样数量 & 实际数量的关系
-//        if(level_samples >= oneGrid_samples * Info.num_of_grids){
-//            // 如果采样数量 > 实际数量, 每个都需要计算
-//        }
-//        else{
-//
-//        }
-
-        //1)检查是否需要重新分配
-        int ZoneCount = 0;  //计数器，计数空网格的个数
-        for (ArrayList<FeatureSubset> oneGrid : grid.grids_row) {
-            //2)检查是否有网格为空,计数
-            if (oneGrid.size() == 0) {
-                ZoneCount ++;
-            }
-        }
-
-        //2）如果真的有空网格，就需要把样本转移给其他的网格
-        //情况1：无空网格，每个网格取相同的样本数量
-        if(ZoneCount == 0){
-            Arrays.fill(this.allocations, oneGrid_samples);
-        }
-        //情况2：有空网格，把样本转移给其他的网格 (ZoneCount > 0)
-        else{
-            //Step1 : grid_size 用于存储每个网格对应的数量
-            List<Integer[]> grid_size_set = new ArrayList<>();
-            for(int index_g = 0; index_g<grid.grids_row.length; index_g++){  //ind 是网格对应的下标
-                ArrayList<FeatureSubset> oneGrid = grid.grids_row[index_g];
-                if(oneGrid.size() >0){   //只有大于0的才可以加入候补集中，用于顶替采样
-                    Integer[] temp = {index_g , oneGrid.size()};
-                    grid_size_set.add(temp);  //(gridID, 存放元素的数量)
-                }
-            }
-            //Step2 : 排序
-//            Collections.sort(grid_size_set, new Comparator<Integer[]>() {
-            grid_size_set.sort(new Comparator<Integer[]>() {
-                @Override
-                public int compare(Integer[] array1, Integer[] array2) {
-                    // 以数组的第2个元素作为比较依据，降序排列 (按存放元素的数量)
-                    return array2[1].compareTo(array1[1]);
-                }
-            });  // 排序后的list就是  (第1大的网格ID，数量），(第2大的网格的ID，数量)
-
-            //3) 重新分配
-            //【版本2】：遍历每一层，遇到了空网格的就找最大的出来顶替
-            int index_transfer = 0;
-            for(int ind = 0; ind<grid.grids_row.length; ind++){
-                ArrayList<FeatureSubset> oneGrid = grid.grids_row[ind];
-                if(oneGrid.size() != 0){  //有值的，可以直接取
-                    this.allocations[ind] += oneGrid_samples;
-                }
-                else {
-                    //找到替换的下标
-                    int replace_index = grid_size_set.get(index_transfer)[0];
-                    //把采样个数加上
-                    this.allocations[replace_index] += oneGrid_samples;
-                    //条件判断，对index_transfer赋值；
-                    if(index_transfer < grid_size_set.size()-1){
-                        index_transfer ++;
-                    }
-                    else{
-                        index_transfer = 0;
-                    }
-                }
-            }
-        }
-    }
-
-    //TODO 【版本4】直接按照每层个数比例分配
-    //基本原则：每个网格采样多个，若出现网格数量为0时，把当前分配到的样本数，直接转嫁给最大数量的网格（网格数量按降序排列）
-    // 有点笨的方法，现在不管网格中含有几个，都是抽样后放回。如果网格只有1个值，然后这个值就会被反复抽
-    // level 表示传入当前层存储的元素，包含的特征数量
-    // level_samples: 这一层采样的个数 (m)
-    // total_samples ：level_samples +  补偿采样（m*level/(n-level)）,n是特征的数量  （这样补有点多）
-    //
-    public void checkAndAllocate_transfer_4(int level, Grid grid, int level_samples) {
-
-        //compensation_samples 补偿的采样数量  // Math.round() 四舍五入地返回最接近的整数
-//        int compensation_samples = Math.round(1.0f * level_samples * level / (Info.num_of_features - level));  //补太多了
-//        this.total_samples += compensation_samples;
-
-//        int compensation_samples = level * m;   //第几层(隐藏了几个特征)就补几个
-
-        this.allocations = new int[Info.num_of_grids];
-        this.level_samples = Math.max(combination(Info.num_of_features -1 ,level), Info.num_of_grids);  //保证：最少每个网格来一个
-
-        //每个网格中分配的采样数
-        int oneGrid_samples = Math.round( 1.0f * this.level_samples / Info.num_of_grids) ;
-
-        //************************************【适用于均匀的网格】*********************************
-        //因为是均匀的网格，如果遇到空网格，就直接跳过不采样了
-        for( int ind =0; ind< grid.grids_row.length; ind++){
-            ArrayList<FeatureSubset> oneGrid = grid.grids_row[ind];
-            if (oneGrid.size() != 0) {
-                this.allocations[ind] = oneGrid_samples;  //保证：如果数量够，就全计算，
-            }
-        }
-        //************************************【适用于非均匀的网格】*********************************
-//        //1)检查是否需要重新分配
-//        int ZoneCount = 0;  //计数器，计数空网格的个数
-//        for (ArrayList<FeatureSubset> oneGrid : grid.grids_row) {
-//            //2)检查是否有网格为空,计数
-//            if (oneGrid.size() == 0) {
-//                ZoneCount ++;
-//            }
-//        }
-//
-//        //2）如果真的有空网格，就需要把样本转移给其他的网格
-//        //情况1：无空网格，每个网格取相同的样本数量
-//        if(ZoneCount == 0){
-//            Arrays.fill(this.allocations, oneGrid_samples);
-//        }
-//        //情况2：有空网格，把样本转移给其他的网格 (ZoneCount > 0)
-//        else{
-//            //Step1 : grid_size 用于存储每个网格对应的数量
-//            List<Integer[]> grid_size_set = new ArrayList<>();
-//            for(int index_g = 0; index_g<grid.grids_row.length; index_g++){  //ind 是网格对应的下标
-//                ArrayList<FeatureSubset> oneGrid = grid.grids_row[index_g];
-//                if(oneGrid.size() >0){   //只有大于0的才可以加入候补集中，用于顶替采样
-//                    Integer[] temp = {index_g , oneGrid.size()};
-//                    grid_size_set.add(temp);  //(gridID, 存放元素的数量)
-//                }
-//            }
-//            //Step2 : 排序
-////            Collections.sort(grid_size_set, new Comparator<Integer[]>() {
-//            grid_size_set.sort(new Comparator<Integer[]>() {
-//                @Override
-//                public int compare(Integer[] array1, Integer[] array2) {
-//                    // 以数组的第2个元素作为比较依据，降序排列 (按存放元素的数量)
-//                    return array2[1].compareTo(array1[1]);
-//                }
-//            });  // 排序后的list就是  (第1大的网格ID，数量），(第2大的网格的ID，数量)
-//
-//            //3) 重新分配
-//            //【版本2】：遍历每一层，遇到了空网格的就找最大的出来顶替
-//            int index_transfer = 0;
-//            for(int ind = 0; ind<grid.grids_row.length; ind++){
-//                ArrayList<FeatureSubset> oneGrid = grid.grids_row[ind];
-//                if(oneGrid.size() != 0){  //有值的，可以直接取
-//                    this.allocations[ind] += oneGrid_samples;
-//                }
-//                else {
-//                    //找到替换的下标
-//                    int replace_index = grid_size_set.get(index_transfer)[0];
-//                    //把采样个数加上
-//                    this.allocations[replace_index] += oneGrid_samples;
-//                    //条件判断，对index_transfer赋值；
-//                    if(index_transfer < grid_size_set.size()-1){
-//                        index_transfer ++;
-//                    }
-//                    else{
-//                        index_transfer = 0;
-//                    }
-//                }
-//            }
-//        }
-    }
-
-    //TODO 【版本5】为每层分配采样个数：log降维，按权重分配
-    //基本原则：每个网格采样多个，若出现网格数量为0时，把当前分配到的样本数，直接转嫁给最大数量的网格（网格数量按降序排列）
-    // 有点笨的方法，现在不管网格中含有几个，都是抽样后放回。如果网格只有1个值，然后这个值就会被反复抽
-    // level 表示传入当前层存储的元素，包含的特征数量
-    // level_samples: 这一层采样的个数 (m)
-    // total_samples ：level_samples +  补偿采样（m*level/(n-level)）,n是特征的数量  （这样补有点多）
-    //
-    public void levelAllocate(int level, Grid grid, int level_samples, int[] allocations) {
-        //初始化
-        this.allocations = new int[Info.num_of_grids];
-        //当前层中，每个网格中分配的采样数
-        int oneGrid_samples = (int) Math.max(Math.round(1.0* this.num_sample[level] / Info.num_of_grids), 1); //每个网格至少来一个
-
-//        this.total_samples = Math.max(combination(Info.num_of_features -1 ,level), Info.num_of_grids);  //保证：最少每个网格来一个
-
-        //************************************【适用于均匀的网格】*********************************
-        //因为是均匀的网格，如果遇到空网格，就直接跳过不采样了
-        for( int ind =0; ind< grid.grids_row.length; ind++){
-            ArrayList<FeatureSubset> oneGrid = grid.grids_row[ind];
-            if (oneGrid.size() >= oneGrid_samples) {  //保证：如果网格中包含记录的数量够，就正常采样
-                this.allocations[ind] = oneGrid_samples;
-                this.level_samples += oneGrid_samples;
-            }
-            else if(oneGrid.size()>0 && oneGrid.size() < oneGrid_samples){ //如果网格含样本数量少，采样多
-                this.allocations[ind] = oneGrid.size();
-                this.level_samples += oneGrid.size();
-            }
-        }
-    }
-
-    //TODO 计算组合的数量（等比例缩放）自动缩放
-    // 问题：等比缩放时，数据不够多，数量不够用来赋予每层采样的个数
-    public int combination(int feature, int level){
-        int result = 1;
-        int n = (int) Math.round(feature * Info.scale);  //特征数量除以缩放的比例
-        int k = Math.min(level, feature-level);
-        //错误判断，缩放太多
-        for(int i=k; i>0; i--){
-            if(n < 1){
-                break;
-            }
-            result = result * (n/i);
-            n--;
-        }
-        //****************************************
-        System.out.println("level : " + level + "\t " +  result);
-        return result;
-    }
-
 
     //TODO 从第2层开始分配：传入的参数是sample,sample * 2 = evaluation number
     public void sampleAllocation_unif(int num_features) {
@@ -1034,7 +714,7 @@ public class Allocation {
         this.num_sample = new int[num_features];  // 记录每层采样几个（按权重）
         this.total_weights = 0.0; //total_weight 权重总数
         int level = Math.max(2,levelIndex);
-        int limit = Math.min(Math.max(2, Info.num_of_samples / (num_features * num_features * 2)), num_features); // 需要评估几个
+        int limit = Math.min(Math.max(2, Info.total_samples_num / (num_features * num_features * 2)), num_features); // 需要评估几个
 
         // 初始化：varianceArr & utility
         ShapMatrixEntry[] utility_level = new ShapMatrixEntry[num_features]; // 需要换成带计数器的大数组
@@ -1552,15 +1232,14 @@ public class Allocation {
         return return_lev;
     }
 
-    //TODO 把所有的方法都合并到一个函数中
-    //shap_matrix[len][feature]
+    //TODO: allocate the number of evaluations by the variance of each layer
     public int sampleAllocation(int num_features, double[][] newLevelMatrix, int limit, int allSamples, GameClass game, Random random, ShapMatrixEntry[][] shap_matrix) {
         this.weigh_for_sample = new double[num_features];  //记录每层采样的按权重
         this.num_sample = new int[num_features];  // 记录每层采样几个（按权重）
         this.total_weights = 0.0; //total_weight 权重总数
 
         // 初始化：varianceArr & utility
-        ShapMatrixEntry[][] utility = new ShapMatrixEntry[num_features][]; // 需要换成带计数器的大数组
+        ShapMatrixEntry[][] utility = new ShapMatrixEntry[num_features][];
         for(int j=0; j<utility.length; j++){   //外层循环：features对应每个长度的collations (n个feature，n+1层)
             utility[j] = new ShapMatrixEntry[num_features];
             for(int i=0; i<num_features; i++) {  //内层循坏：每个features
@@ -1568,19 +1247,18 @@ public class Allocation {
             }
         }
 
-        //传入的levelIndex = 9; 取出一个长度为10的，加上长度为11；
         for(int l = game.start_level; l<=game.end_level; l++){  // LM[i][j] - LM[i-1][j-1]
             for(int fea=0; fea<num_features; fea++){ //对于每个feature
                if(game.isRealData){
                    //第一个值：直接减去斜对角的值
                    double value = 0;
                    if(fea == num_features - 1){
-                       value = newLevelMatrix[l][fea] - newLevelMatrix[l-1][0];  //l=10，存储长度11
+                       value = newLevelMatrix[l][fea] - newLevelMatrix[l-1][0];
                    }
                    else{
-                       value = newLevelMatrix[l][fea] - newLevelMatrix[l-1][fea+1];  //l=10，存储长度11
+                       value = newLevelMatrix[l][fea] - newLevelMatrix[l-1][fea+1];
                    }
-                   shap_matrix[l][fea].record.add(value);  // l=10; 储的sub长度: 11 - 10
+                   shap_matrix[l][fea].record.add(value);
                    shap_matrix[l][fea].sum += value;
                    shap_matrix[l][fea].count ++;
                }
@@ -1589,23 +1267,23 @@ public class Allocation {
                 for(int count = 0; count <limit; count ++){
                     //再随机选1个长度相同的，构成新的subset
                     Set<Integer> hashSet = new HashSet<>();
-                    while (hashSet.size() <= l) {  //level=9, l=10，存储对应长度为11的subset
+                    while (hashSet.size() <= l) {
                         int number = random.nextInt(num_features); // 从0到n（包含n）中随机生成一个数
                         hashSet.add(number); // 添加到集合中，如果已经存在则不会添加
                     }
-                    ArrayList<Integer> subset_1 = new ArrayList<>(hashSet);  //前项，包含fea
+                    ArrayList<Integer> subset_1 = new ArrayList<>(hashSet);
                     if(!subset_1.contains(fea)){
                         int removeInd = random.nextInt(subset_1.size());
                         subset_1.set(removeInd, fea);
                     }
-                    ArrayList<Integer> subset_2 = new ArrayList<>(subset_1);  //后项，不含fea
-                    subset_2.remove(Integer.valueOf(fea));  //删除元素，而不是下标
-                    double value_1 = game.gameValue(game.model.gameName, subset_1); //len=11
-                    double value_2 = game.gameValue(game.model.gameName, subset_2); //len=10
-                    utility[l][fea].record.add(value_1 - value_2);  // l=10; 储的sub长度: 11 - 10
+                    ArrayList<Integer> subset_2 = new ArrayList<>(subset_1);
+                    subset_2.remove(Integer.valueOf(fea));
+                    double value_1 = game.gameValue(game.model.gameName, subset_1);
+                    double value_2 = game.gameValue(game.model.gameName, subset_2);
+                    utility[l][fea].record.add(value_1 - value_2);
                     utility[l][fea].sum += value_1 - value_2;
                     utility[l][fea].count ++;
-                    //20240821添加：把估计的值存入
+                    //save the marginal contribution
                     shap_matrix[l][fea].record.add(value_1 - value_2);
                     shap_matrix[l][fea].sum += value_1 - value_2;
                     shap_matrix[l][fea].count ++;

@@ -1,4 +1,4 @@
-package SeedVersion;
+package AlgoVersion;
 
 import Game.GameClass;
 import Global.Comparer;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class CC_algorithm_double {
+public class CC_algorithm {
 
     int num_features;  // the number of features
     double[] given_weights;
@@ -27,7 +27,7 @@ public class CC_algorithm_double {
         long ave_runtime = 0;
         double ave_error_max = 0; //计算最大误差
         double ave_error_ave = 0;
-        double ave_mse = 0;
+//        double ave_mse = 0;
         for(int i=0; i< Info.timesRepeat; i++) {
             Random PermutationGene = new Random(game.seedSet[i]);
             //3）计算shapley value
@@ -39,19 +39,17 @@ public class CC_algorithm_double {
             Comparer comparator = new Comparer();
             double error_ave = comparator.computeAverageError(shap_matrix, this.exact, this.num_features);  //计算平均误差
             double error_max = comparator.computeMaxError(shap_matrix, this.exact, this.num_features); //计算最大误差
-            double mse = comparator.computeMSE(shap_matrix, this.exact, this.num_features);
 
             ave_runtime += time_2 - time_1;
             ave_error_max += error_max;
             ave_error_ave += error_ave;
-            ave_mse += mse;
-            System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max + " \t"  +  "mse: " + mse);
+            System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
 //            for(ShapMatrixEntry ele: shap_matrix){
 //                System.out.print(ele.sum + "\t");
 //            }
 //            System.out.println();
         }
-        System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " + ave_error_max/Info.timesRepeat + " \t"  +  "mse: " + ave_mse/Info.timesRepeat);
+        System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " + ave_error_max/Info.timesRepeat);
         // 5）输出时间
         System.out.println("CC time : " + (ave_runtime * 0.001)/ Info.timesRepeat );  //+ "S"
 //        HashMap<Integer, double[]> s = new HashMap<>();
@@ -86,10 +84,6 @@ public class CC_algorithm_double {
             ave_error_max += error_max;
             ave_error_ave += error_ave;
             System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
-//            for(ShapMatrixEntry ele: shap_matrix){
-//                System.out.print(ele.sum + "\t");
-//            }
-//            System.out.println();
         }
         double acv = comparator.computeACV(sv_values, this.num_features);
         System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " + ave_error_max/Info.timesRepeat + " \t");

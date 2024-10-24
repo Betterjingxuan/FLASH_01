@@ -1,19 +1,14 @@
-package SeedVersion;
+package AlgoVersion;
 
 import Game.GameClass;
 import Global.Comparer;
-import Global.FileOpera;
 import Global.Info;
-import Global.NumpyReader;
 
-import java.io.DataInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 
 /*TODO subset不排序的airport*/
-public class MonteCarlo_double {
+public class MC_algorithm {
 
     int num_features;  //the number of features
     double[] exact;   // the exact shapley value
@@ -21,40 +16,34 @@ public class MonteCarlo_double {
 
     /* TODO [MC Algorithm]: 通过Monte Carlo sampling 计算 shapley value
        num_sample: 采样的数量; model : 当前进行的game */
-    public void MCShap_seed(boolean gene_weight, String model){
+    public void MC_Shap(boolean gene_weight, String model){
 
-        //1)初始化
+        //Initialization
         GameClass game = new GameClass();
         initialization(game, gene_weight, model);
 
         long ave_runtime = 0;
-        double ave_error_max = 0; //计算最大误差
+        double ave_error_max = 0;
         double ave_error_ave = 0;
-//        double ave_mse = 0;
         for(int i=0; i< Info.timesRepeat; i++) {
             Random PermutationGene = new Random(game.seedSet[i]);
             long time_1 = System.currentTimeMillis();
             double[] shap_matrix = computeShapBySampling_2(game, this.num_features, this.num_samples, model, PermutationGene);   //实验版
             long time_2 = System.currentTimeMillis();
 
-            //4）计算误差
+            //4）estimate error
             Comparer comparator = new Comparer();
             double error_max = comparator.computeMaxError(shap_matrix, this.exact); //计算最大误差
             double error_ave = comparator.computeAverageError(shap_matrix, this.exact, this.num_features);  //计算平均误差
-//            double mse = comparator.computeMSE(shap_matrix, this.exact, this.num_features);
 
             ave_runtime += time_2 - time_1;
             ave_error_max += error_max;
             ave_error_ave += error_ave;
-//            ave_mse += mse;
-//            System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max + " \t"  +  "mse: " + mse);
             System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
         }
 
-        // 5）输出时间
-//        System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  + "error_max: " + ave_error_max/Info.timesRepeat + " \t"  +  "mse: " + ave_mse/Info.timesRepeat);
         System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  + "error_max: " + ave_error_max/Info.timesRepeat);
-        System.out.println("MC_V4 time : " + (ave_runtime * 0.001)/ Info.timesRepeat);  //+ "S"
+        System.out.println("MC_V4 time : " + (ave_runtime * 0.001)/ Info.timesRepeat);
     }
 
     public void MCShap_scale(boolean gene_weight, String model){
@@ -246,52 +235,6 @@ public class MonteCarlo_double {
         return perm;
     }
 
-    private ArrayList<Integer> permutation(int numFeatures, Random PermutationGene) {
-        //1) 初始化perm序列（initial 对应的位置是对应的值）
-        ArrayList<Integer> perm = new ArrayList<>();
-        for(int i=0; i<numFeatures; i++){
-            perm.add(i);
-        }
-
-        // 生成一个新的种子
-        int sequenceSeed = PermutationGene.nextInt();
-        Random random = new Random(sequenceSeed);
-
-        // 随机打乱序列
-        for(int i=numFeatures/2; i>0; i--){  // (int i=numFeatures/2; i>1; i--)  (int i=0; i<numFeatures/2; i++)
-            int j = random.nextInt(numFeatures); //从[0, i+1)中随机选取一个int
-            int temp = perm.get(j);  // 交换位置
-            perm.set(j, perm.get(i));
-            perm.set(i, temp);
-        }
-        return perm;
-    }
-
-    private ArrayList<Integer> permutation_2(Random PermutationGene) {
-        //1) 初始化perm序列（initial 对应的位置是对应的值）
-        ArrayList<Integer> perm = new ArrayList<>();
-        for(int i=0; i<this.num_features; i++){
-            perm.add(i);
-        }
-
-        // 生成一个新的种子
-        int sequenceSeed = PermutationGene.nextInt();
-        Random random = new Random(sequenceSeed);
-        int step = Math.round(Math.max(1, 5 - Math.round(Math.log10(Info.setting))));
-
-        // 随机打乱序列
-        for(int i = 0; i<this.num_features; i += step){  // (int i=numFeatures/2; i>1; i--)  (int i=0; i<numFeatures/2; i++)
-            int j = random.nextInt(this.num_features); //从[0, i+1)中随机选取一个int
-            int temp = perm.get(j);  // 交换位置
-            perm.set(j, perm.get(i));
-            perm.set(i, temp);
-        }
-
-        return perm;
-    }
-
-    // TODO 按step打乱
-    /*10: step=4;  50-100: step=3; 500-1000: step=2; 5000-10000: step=1 */
     private ArrayList<Integer> permutation_3(Random PermutationGene) {
         //1) 初始化perm序列（initial 对应的位置是对应的值）
         ArrayList<Integer> perm = new ArrayList<>();
@@ -318,40 +261,6 @@ public class MonteCarlo_double {
 //        System.out.println(perm.toString());
         return perm;
     }
-
-    /*打乱的比例有点多*/
-    private ArrayList<Integer> permutation_4(Random PermutationGene) {
-        //1) 初始化perm序列（initial 对应的位置是对应的值）
-        ArrayList<Integer> perm = new ArrayList<>();
-        for(int i=0; i<this.num_features; i++){
-            perm.add(i);
-        }
-
-        // 生成一个新的种子
-//        long sequenceSeed = PermutationGene.nextLong();
-        int sequenceSeed = PermutationGene.nextInt();
-        Random random = new Random(sequenceSeed);
-//        int range = getRange();
-//        System.out.print(range + ": " + (Math.abs(Math.log10(Info.setting))));
-
-        // 随机打乱序列
-        for(int i = getRange(); i<this.num_features; i ++){  // (int i=numFeatures/2; i>1; i--)  (int i=0; i<numFeatures/2; i++)
-            int j = random.nextInt(this.num_features); //从[0, i+1)中随机选取一个int
-            int temp = perm.get(j);  // 交换位置
-            perm.set(j, perm.get(i));
-            perm.set(i, temp);
-        }
-        return perm;
-    }
-
-    private int getRange() {
-        int range = (int) Math.round( 0.5 * this.num_features / Math.abs(Math.log10(Info.setting)));
-        if(range >= this.num_features){
-            range = this.num_features - Math.max(this.num_features/3, 5);
-        }
-        return Math.max(range, 0);
-    }
-
 
     private void initialization(GameClass game, boolean gene_weight, String modelName) {
         game.gameInit(gene_weight, modelName);

@@ -1,22 +1,14 @@
-package SeedVersion;
+package AlgoVersion;
 
 import Game.GameClass;
-import Game.ModelGame;
 import Global.*;
-import structure.ShapMatrixEntry;
 
-import java.io.DataInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
-import java.util.stream.IntStream;
-
+/* TODO  S_SVARM-AAAI-2024.*/
 public class S_SVARM {
-    int num_features;  //数据集中包含的特征数量
+    int num_features;  //the number of features
 
     double[] given_weights;
     double[] exact;  // the exact shapley value
@@ -28,7 +20,51 @@ public class S_SVARM {
     int[][] c_i_l_plus;
     int[][] c_i_l_minus;
 
-    public void SSVARM_algorithm(boolean gene_weight, String model){
+
+    //TODO S-SVARM algorithm
+    public void SSVARM_Shap(boolean gene_weight, String model){
+
+        GameClass game = new GameClass();
+        initialization(game, gene_weight, model);
+        Comparer comp = new Comparer();
+
+        long ave_runtime = 0;
+        double ave_error_max = 0;
+        double ave_error_ave = 0;
+        for(int t = 0; t < Info.timesRepeat; t++) {
+            Random random = new Random(game.seedSet[t]);
+            this.num_samples = Info.total_samples_num;
+            this.phi_i_l_plus = new double[this.num_features][];
+            this.phi_i_l_minus = new double[this.num_features][];
+            this.c_i_l_plus = new int[this.num_features][];
+            this.c_i_l_minus = new int[this.num_features][];
+
+            for(int i = 0; i< this.num_features; i++){  // s范围是[0,n+1)
+                this.phi_i_l_plus[i] = new double[this.num_features];
+                this.phi_i_l_minus[i] = new double[this.num_features];
+                this.c_i_l_plus[i] = new int[this.num_features];
+                this.c_i_l_minus[i] = new int[this.num_features];
+            }
+
+            long time_1 = System.currentTimeMillis();
+            double[] shap_matrix = computeSVBySSVARM(game, model, random);
+            long time_2 = System.currentTimeMillis();
+
+            // 计算误差
+            double error_max = comp.computeMaxError(shap_matrix, this.exact); //计算最大误差
+            double error_ave = comp.computeAverageError(shap_matrix, this.exact, this.num_features);  //计算平均误差
+
+            ave_runtime += time_2 - time_1;
+            ave_error_max += error_max;
+            ave_error_ave += error_ave;
+            System.out.println("run: " + t + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
+        }
+        System.out.println(model + ":  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " +
+                ave_error_max/Info.timesRepeat);
+        System.out.println("S-SVARM time : " + (ave_runtime * 0.001)/ Info.timesRepeat );
+    }
+
+    public void SSVARM_scale(boolean gene_weight, String model){
 
         GameClass game = new GameClass();
         initialization(game, gene_weight, model);
@@ -71,14 +107,12 @@ public class S_SVARM {
 //            ave_mse += mse;
             System.out.println("run: " + t + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
         }
-//        double acv = comp.computeACV(sv_values, this.num_features);
+        double acv = comp.computeACV(sv_values, this.num_features);
         System.out.println(model + ":  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  +  "error_max: " +
                 ave_error_max/Info.timesRepeat + " \t"  +  "error_MSE: " + ave_mse/ Info.timesRepeat);
-//        System.out.println("average cv :" + acv);
+        System.out.println("average cv :" + acv);
         System.out.println("S-SVARM time : " + (ave_runtime * 0.001)/ Info.timesRepeat );  //+ "S"
     }
-
-    //TODO S-SVARM algorithm
     private double[] computeSVBySSVARM(GameClass game, String model, Random random) {
 
         ArrayList<Integer> allPlayers = new ArrayList<>();

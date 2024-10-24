@@ -1,4 +1,4 @@
-package SeedVersion;
+package AlgoVersion;
 
 import Game.GameClass;
 import Global.Info;
@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-/*TODO subset不排序的airport*/
 public class benchmark {
 
     int num_features;  //the number of features

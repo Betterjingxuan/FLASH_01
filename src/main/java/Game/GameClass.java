@@ -18,11 +18,11 @@ public class GameClass {
     public double[] given_weights;
     public double halfSum;  //for Voting game
     private OkHttpClient client;
-    public ModelGame model;  //ModelGame：为了不同的game 调用不同value_function
+    public ModelGame model;  //ModelGame：utility function
 
-    public double key_features_weight = 0.5;
-    public double check_weight = 0.1;   //最后阶段方差计算的比例
-    public double number_weight = 0.2;  //在样本分配时，数量特征所占的比例
+    public double key_features_weight = 0.5;  //2阶段特征数量比例 (固定不改)
+    public double check_weight = 0.1;   //2阶段样本比例 (固定不改)
+    public double number_weight = 0.2;  //在样本分配时，数量特征所占的比例 (固定不改)
     public double variance_weight; //在样本分配时，方差特征所占的比例
     public long[] seedSet;
     public boolean isRealData;   //true: real dataset; // false：game theorem dataset
@@ -101,15 +101,14 @@ public class GameClass {
                 }
                 //Case2: 使用默认的weight
                 else {
-                    this.seedSet(2024L);
+                    this.seedSet = seedSet(2024L);
                     this.num_features = Info.num_of_features_voting;
                     this.given_weights = Info.given_weights_voting;
                     this.halfSum = Arrays.stream(this.given_weights).sum() / 2;  //对given_weights中的数据求和
                     this.exact = Info.voting_exact;
                     this.isRealData = false;
-                    this.check_weight = 0.1;  //0.35  //0.2  //0.18  //0.15
-                    this.key_features_weight = 0.5;    // 0.8  //0.85
-                    /* voting-2024L-100n- 0.1 - 0.5*/
+                    this.check_weight = 0.1;
+                    this.key_features_weight = 0.5;
                 }
                 break;
 
@@ -183,12 +182,6 @@ public class GameClass {
                 break;
             case "model":
                 value = this.model.value_modelPrediction(given_weights, subset);
-            case "svm_model":
-                value = this.model.value_darwin(given_weights, subset);  //复制两份
-                break;
-            case "iot":
-                value = this.model.IOT_value(given_weights, subset);  //复制两份
-                break;
             case "health":
                 value = this.model.Health_value(subset, client);
                 break;
@@ -208,15 +201,5 @@ public class GameClass {
         return localSet;
     }
 
-//    public long[] seedSet(long seed, int start){
-//        long[] localSet = new long[Info.timesRepeat];
-//        long[] temp = new long[Info.timesRepeat*start*start];
-//        Random random = new Random(seed);
-//        for(int i=0; i<temp.length; i++){
-//            temp[i] = random.nextLong();    // random.nextLong()可能是正也是负
-//        }
-//        System.arraycopy(temp, start * Info.timesRepeat, localSet, 0, Info.timesRepeat);
-//        return localSet;
-//    }
 
 }

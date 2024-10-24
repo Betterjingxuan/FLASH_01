@@ -69,19 +69,16 @@ public class FileOpera {
      * */
     public double[] file_read(String file_path, int num_features) {
 
-        //返回一个double的数组
-        double[] benchmark = new double[num_features];
 
-        //定义一块缓冲区buffer_reader
+        double[] benchmark = new double[num_features];
         BufferedReader buffer_reader = null;
         File file = new File(file_path);
 
         try {
-            //如果文件合理且存在，开始读入数据
             if(file.isFile() && file.exists()) {
                 InputStreamReader instream_reader = new InputStreamReader(new FileInputStream(file));
                 buffer_reader = new BufferedReader(instream_reader);
-                String lineTex = null;  //当前读取到的内容 lineTex
+                String lineTex = null;
                 while ((lineTex = buffer_reader.readLine()) != null) {
                     String[] entrySet = lineTex.split(",");
                     for(int i=0; i < entrySet.length; i++){

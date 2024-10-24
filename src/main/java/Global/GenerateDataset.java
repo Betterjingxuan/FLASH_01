@@ -21,7 +21,7 @@ public class GenerateDataset {
     }
 
     /* TODO 生成数据集MAP
-      num: 特征的数量
+      num: the number of features
       featureSet: 所有特征的集合
       */
     public LinkedHashMap<String, Double>[] generateDataSet(int num, String[] featureSet) {

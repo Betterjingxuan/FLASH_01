@@ -2,27 +2,19 @@ package Global;
 
 public class Info {
     //----------------------------------------全局 & sampling的设置------------------------------------------------------
-    //总体采样
-    //500,1000,5000,10000,50000
-    public static final int setting = 1000;
+    public static final int setting = 1000;  //总体采样
     //重复次数
-    public static final int timesRepeat = 10;
+    public static final int timesRepeat = 2;
 
-    public static final String model_name = "bank";  //health bank airport  voting  shoes  model  svm_model  iot health
+    public static final String model_name = "airport";  //health bank airport  voting  shoes  model  svm_model  iot health
 
     //设置 特征的数量
-    public static final int num_of_features = 16;  //IOT:83-67-50-33-17
+    public static final int num_of_features = 100;  //health = 39; bank = 16; airport=100; airport = 51; IOT:83-67-50-33-17
 
     /*正常测试：false；  scale测试：true */
     public static boolean is_gene_weight = false;   //game theorem dataset scale test
-
     public static final int total_samples_num = setting * num_of_features;
-
-    //all-Confidence 全局置信度
-//    public static final int allConf = (int) Math.round(0.5 * num_of_features_voting);
-    public static final int allConf = (int) Math.round(0.5 * num_of_features);  //voting game 需要！
-
-    public static final long seed = 2024L;  //System.currentTimeMillis()   4L   10000L
+    public static final long seed = 2024L;
     public static final double[] model_instance_ave_2 = {5637.777778, 8.85333E-06, 312.6820192, 207.9367699, 1881.333333,
             7144.222222, 0.336543684, 0.195807866, 260.3093946, 0.051783674, 0.021476361, 4.050261959, 3.762087244,
             9.333333333, 5232.222222, 1656.518185, 155865.109, 10870, 6271.111111, 1.05878E-05, 287.8027665, 125.0834649,
@@ -34,37 +26,13 @@ public class Info {
             1.13E-05, 56.12014818, 35.82186527, 199, 4510, 0.224065277, 0.049480547, 45.97100672, 0.031238517,
             0.006236812, 1.690723844, 0.716215486, 1, 14130, 2033.696391, 17652.87881, 14925};  //输入的预测样本
 
-//    public static final double[] model_instance_ave_2 ={5160, 1.25E-05, 120.8041741, 86.85333376, 957, 6601, 0.361800168, 0.217459316, 103.8287539,
-//            0.051836416, 0.016547432, 1.828075941, 1.493242297, 22, 10730, 1679.23206, 288285.0449, 15890, 6085, 1.19E-05};
-//    public static final double[] model_instance_2 ={805, 8.03E-06, 382.210767, 609.0653204, 2668, 4987, 0.416253056, 0.189354093, 310.6232389,
-//            0.068110395, 0.021067302, 7.87346496, 4.440531543, 5, 3850, 1905.654545, 183367.3846, 4655, 795, 1.30E-05};
     //---------------------------------------------数据集的设置-----------------------------------------------------------
 
     //数据集文件的根目录
-    public static final String ROOT = "D:/DiskOfJingxuan/Code/Interpretability/ShapleyValueApproximation-test/ShapleyValueApproximation-test-0912/Dataset/";
+    public static final String ROOT = "D:/DiskOfJingxuan/Code/Interpretability/ShapleyValueApproximation-test/ShapleyValueApproximation-test-0911/Dataset/";
 
     public static final String benchmark_path = ROOT + "benchmark_" + model_name + "_" +  num_of_features +"_"+  num_of_features * 50000 + ".tex";
 
-//    public static final String benchmark_path = Info.ROOT + "Dataset/benchmark_" + model_name + "_" +  num_of_features +"_"+ "390000"  + ".tex";
-//    public static final String benchmark_path = Info.ROOT + "Benchmark/benchmark_" + model + "_" +  num_of_features + "_500000" + ".tex";
-
-    //------------------------------------------------ 多余删掉 ----------------------------------------------------------
-    // [scale test] 数据集存放位置
-//    public static final String fileName = Info.ROOT + "ScaleDateset/" + model_name + "_" +  num_of_features + ".npy";
-//    public static final String MatrixFileName = "D:/DiskOfJingxuan/Code/Interpretability/SHAP/Database/evaluateMatrix.txt";
-
-    //数据集包含条目的数量
-//    public static final int dataset_size = 600;
-
-    //采样时的缩放比例
-    public static final double scale = 0.1;  // 缩小因子
-
-    //---------------------------------------------网格尺寸的设置-----------------------------------------------------------
-
-    public static final int num_of_grids = 10;  //网格数量需要大于1
-
-    public static final int num_of_samples = 500;  //每层采样的个数(当前设定是每层采样相同数量)
-    //假设了每个网格只取1个值，所以网格数量 = 每层采样的数量
 
     //************************* b-train (num_of_features = 9) **********************************************
     public static final double[] model_instance_ave = {4, 3, 3, 3, 3, 4, 3, 3, 2};  //数据集的样本均值
@@ -79,8 +47,6 @@ public class Info {
     public static final int num_of_features_bank = 16;
     public static final double[] instance_bank = {1.87516, 0.48806, -1.91425, 1.02668, -0.13076, 1.72377, -1.14205,
             -0.42476, -0.72364, 0.98035, -0.84603, 0.83532, -0.25523, -0.40722, -0.32041, 0.44441};  //id=10
-//    public static final double[] instance_bank_avg = {-0.07351, -0.12631, -0.24643, -0.30904, -0.13076, -0.08324, -1.14205,
-//            -0.42476, -0.72364, 0.06356, 0.81929, -0.05454, -0.13796, 0.46836, -0.2237, 0.44441};
     public static final double[] instance_bank_avg = {-0.07351, -0.12631, -0.24643, -0.30904, 7.64767, -0.08324, 0.87562,
             2.35429, 1.49513, 0.06356, 0.81929, -0.05454, -0.13796, 0.46836, -0.2237, -2.57996};
 

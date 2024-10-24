@@ -1,4 +1,4 @@
-package SeedVersion;
+package AlgoVersion;
 
 import Game.GameClass;
 import Global.Comparer;
@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.Random;
 
 /*TODO Compute Shapley value by sampling m marginal contributions by optimum allocation
-*  MCN-2017-Castro et. al.*/
-public class MCN {
+*  MCN-2017-Castro et al.*/
+public class MCN_algorithm {
 
     int num_features;  //the number of features
     double[] exact;   // the exact shapley value
@@ -42,8 +42,8 @@ public class MCN {
             }
             Random PermutationGene = new Random(game.seedSet[r]);
             long time_1 = System.currentTimeMillis();
-//            double[] shap_matrix = computeShapBySampling(game, this.num_features, this.num_samples, model, PermutationGene, utility);   //实验版
-            double[] shap_matrix = computeShapBySampling_real(game, this.num_features, this.num_samples, model, PermutationGene);   //实验版
+            double[] shap_matrix = computeShapBySampling(game, this.num_features, this.num_samples, model, PermutationGene, utility);   //实验版
+//            double[] shap_matrix = computeShapBySampling_real(game, this.num_features, this.num_samples, model, PermutationGene);   //实验版
             long time_2 = System.currentTimeMillis();
 
             //4）计算误差
@@ -59,18 +59,16 @@ public class MCN {
 //            System.out.println("run: " + i + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max + " \t"  +  "mse: " + mse);
             System.out.println("run: " + r + " " + "error_ave: " + error_ave + " \t"  +  "error_max: " + error_max);
         }
-        double acv = comparator.computeACV(sv_values, this.num_features);
+//        double acv = comparator.computeACV(sv_values, this.num_features);
 
         // 5）输出时间
 //        System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  + "error_max: " + ave_error_max/Info.timesRepeat + " \t"  +  "mse: " + ave_mse/Info.timesRepeat);
         System.out.println(model + " Game:  " + "error_ave: " + ave_error_ave/Info.timesRepeat + " \t"  + "error_max: " + ave_error_max/Info.timesRepeat);
-        System.out.println("average cv :" + acv);
+//        System.out.println("average cv :" + acv);
         System.out.println("MC_V4 time : " + (ave_runtime * 0.001)/ Info.timesRepeat);  //+ "S"
     }
-
-    //TODO 通过Monte Carlo random sampling 计算 shapley value
     private double[] computeShapBySampling(GameClass game, int num_features, int num_sample, String model, Random random, ShapMatrixEntry[][] utility) {
-        int con = 0;
+
         double[] shap_matrix = new double[num_features];  //大数组
         ShapMatrixEntry[][] utilArr = new ShapMatrixEntry[this.num_features][]; // 需要换成带计数器的大数组
         for(int i=0; i<utilArr.length; i++){   //外层循环：features对应每个长度的collations (n个feature，n+1层)
@@ -81,39 +79,7 @@ public class MCN {
             }
         }
         //评估阶段：填充矩阵
-        for(int i=0; i<num_features; i++) {
-            ArrayList<Integer> idxs = new ArrayList<>();   //构造一个不包含i的permutation ：idxs
-            for (int ele = 0; ele < i; ele++) {
-                idxs.add(ele);
-            }
-            for (int ele = i + 1; ele < this.num_features; ele++) {  // 添加 range(i)
-                idxs.add(ele);
-            }
-            for (int j = 0; j < num_features; j++) {  //遍历每个长度
-                for (int count = 0; count < this.initial_m; count++) {
-                    idxs = permutation(idxs, random);   //生成一个打乱的序列
-
-                    //2）利用序列p, 求每个feature 的 marginal contribution
-                    ArrayList<Integer> subset_1 = new ArrayList<>();   //*subset_1 第一个特征子集
-                    ArrayList<Integer> subset_2 = new ArrayList<>();   //*subset_2 第二个特征子集
-
-                    // 3）构造两个子集subset_1 & subset_2
-                    for (int ind = 0; ind < j; ind++) { // ele 对应一个特征
-                        subset_1.add(idxs.get(ind));
-                        subset_2.add(idxs.get(ind));
-                    }
-                    subset_2.add(i);
-                    //4)分别求函数值
-                    double value_1 = game.gameValue(model, subset_1);
-                    double value_2 = game.gameValue(model, subset_2);
-                    utilArr[i][j].sum += value_2 - value_1;
-                    utilArr[i][j].count++;
-                    utilArr[i][j].record.add(value_2 - value_1);
-                    con += 2;
-                }
-            }
-        }
-        System.out.println("count: " + con);
+        computeSV_1(game, model, random, utilArr, this.initial_m);
 
         // 计算方差
         double[][] var = new double[this.num_features][this.num_features];
@@ -138,6 +104,28 @@ public class MCN {
         }
 
         // second stage
+        computeSV_2(game, model, random, utility, mst);
+
+        // 5) 求r次采样的平均值
+        for(int i=0; i<num_features; i++) {
+            for(int j=0; j<num_features; j++) {
+                if(utility[i][j].count != 0){
+                    utility[i][j].sum = utility[i][j].sum / utility[i][j].count;
+                }
+                else{
+                    utility[i][j].sum = utilArr[i][j].sum / utilArr[i][j].count;
+                }
+                shap_matrix[i] += utility[i][j].sum;
+            }
+            shap_matrix[i] = shap_matrix[i] / num_features;
+        }
+        return shap_matrix;
+    }
+
+
+    //传入固定值limit
+    private void computeSV_1(GameClass game, String model, Random random, ShapMatrixEntry[][] utilArr, int limit) {
+        int con = 0;
         for(int i=0; i<num_features; i++) {
             ArrayList<Integer> idxs = new ArrayList<>();   //构造一个不包含i的permutation ：idxs
             for (int ele = 0; ele < i; ele++) {
@@ -147,8 +135,8 @@ public class MCN {
                 idxs.add(ele);
             }
             for (int j = 0; j < num_features; j++) {  //遍历每个长度
-                for (int count = 0; count < mst[i][j]; count++) {
-                    idxs = permutation(idxs, random);   //生成一个打乱的序列
+                for (int count = 0; count < limit; count++) {
+                    idxs = permutation_2(idxs, random);   //生成一个打乱的序列
 
                     //2）利用序列p, 求每个feature 的 marginal contribution
                     ArrayList<Integer> subset_1 = new ArrayList<>();   //*subset_1 第一个特征子集
@@ -163,28 +151,53 @@ public class MCN {
                     //4)分别求函数值
                     double value_1 = game.gameValue(model, subset_1);
                     double value_2 = game.gameValue(model, subset_2);
-                    utility[i][j].sum += value_2 - value_1;
-                    utility[i][j].count++;
-                    utility[i][j].record.add(value_2 - value_1);
+                    utilArr[i][j].sum += value_2 - value_1;
+                    utilArr[i][j].count++;
+                    utilArr[i][j].record.add(value_2 - value_1);
                     con += 2;
                 }
             }
         }
         System.out.println("count: " + con);
-
-        // 5) 求r次采样的平均值
-        for(int i=0; i<num_features; i++) {
-            for(int j=0; j<num_features; j++) {
-                if(utility[i][j].count != 0){
-                    utility[i][j].sum = utility[i][j].sum / utility[i][j].count;
-                    shap_matrix[i] += utility[i][j].sum;
-                }
-            }
-            shap_matrix[i] = shap_matrix[i] / num_features;
-        }
-        return shap_matrix;
     }
 
+    //传入分配的样本limit
+    private void computeSV_2(GameClass game, String model, Random random, ShapMatrixEntry[][] utilArr, int[][] limit) {
+        int con = 0;
+        for(int i=0; i<num_features; i++) {
+            ArrayList<Integer> idxs = new ArrayList<>();   //构造一个不包含i的permutation ：idxs
+            for (int ele = 0; ele < i; ele++) {
+                idxs.add(ele);
+            }
+            for (int ele = i + 1; ele < this.num_features; ele++) {  // 添加 range(i)
+                idxs.add(ele);
+            }
+            for (int j = 0; j < num_features; j++) {  //遍历每个长度
+                for (int count = 0; count < limit[i][j]; count++) {
+                    idxs = permutation_2(idxs, random);   //生成一个打乱的序列
+
+                    //2）利用序列p, 求每个feature 的 marginal contribution
+                    ArrayList<Integer> subset_1 = new ArrayList<>();   //*subset_1 第一个特征子集
+                    ArrayList<Integer> subset_2 = new ArrayList<>();   //*subset_2 第二个特征子集
+
+                    // 3）构造两个子集subset_1 & subset_2
+                    for (int ind = 0; ind < j; ind++) { // ele 对应一个特征
+                        subset_1.add(idxs.get(ind));
+                        subset_2.add(idxs.get(ind));
+                    }
+                    subset_2.add(i);
+                    //4)分别求函数值
+                    double value_1 = game.gameValue(model, subset_1);
+                    double value_2 = game.gameValue(model, subset_2);
+                    utilArr[i][j].sum += value_2 - value_1;
+                    utilArr[i][j].count++;
+                    utilArr[i][j].record.add(value_2 - value_1);
+                    con += 2;
+                }
+            }
+        }
+        System.out.println("count: " + con);
+    }
     private double[] computeShapBySampling_real(GameClass game, int num_features, int num_sample, String model, Random random) {
         int con = 0;
         double[] shap_matrix = new double[num_features];  //大数组
@@ -331,6 +344,50 @@ public class MCN {
         // 使用 Collections.shuffle 打乱序列
         Collections.shuffle(perm, random);
 
+        return perm;
+    }
+
+    private ArrayList<Integer> permutation_2(ArrayList<Integer> list, Random PermutationGene) {
+        //1) 初始化perm序列（initial 对应的位置是对应的值）
+        ArrayList<Integer> perm = new ArrayList<>(list);
+
+        // 生成一个新的种子
+        int sequenceSeed = PermutationGene.nextInt();
+        Random random = new Random(sequenceSeed);
+
+        // 使用 Collections.shuffle 打乱序列
+//        Collections.shuffle(perm, random);
+        // 随机打乱序列
+        for(int i = 0; i<list.size(); i++){  // (int i=numFeatures/2; i>1; i--)  (int i=0; i<numFeatures/2; i++)
+            int j = random.nextInt(list.size()); //从[0, i+1)中随机选取一个int
+            int temp = perm.get(j);  // 交换位置
+            perm.set(j, perm.get(i));
+            perm.set(i, temp);
+        }
+
+        return perm;
+    }
+
+    private ArrayList<Integer> permutation_3(ArrayList<Integer> list, Random PermutationGene) {
+        //1) 初始化perm序列（initial 对应的位置是对应的值）
+        ArrayList<Integer> perm = new ArrayList<>(list);
+
+        // 生成一个新的种子
+        int sequenceSeed = PermutationGene.nextInt();
+        Random random = new Random(sequenceSeed);
+        double step = Math.min(Math.max(1.0, 5.0 - Math.log10(Info.setting)), 4);
+//        System.out.println("step:" + step);
+
+        // 随机打乱序列
+        for(double i = 0; i<list.size(); i += step){  // (int i=numFeatures/2; i>1; i--)  (int i=0; i<numFeatures/2; i++)
+//            int index = (int) Math.round(i);
+            int index = (int) Math.min(list.size()-1, Math.round(i));
+//            System.out.println(index);
+            int j = random.nextInt(list.size()); //从[0, i+1)中随机选取一个int
+            int temp = perm.get(j);  // 交换位置
+            perm.set(j, perm.get(index));
+            perm.set(index, temp);
+        }
         return perm;
     }
 
