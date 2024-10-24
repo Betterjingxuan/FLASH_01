@@ -12,7 +12,6 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 - Local interpretation
 - Dynamic Allocation
 
-  
 ## Implementation
 1. Prerequisites
 - Java Development Kit (JDK) version 8 or higher
@@ -33,23 +32,28 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 - Run the application
   ```bash
   java Main
-  
-
-## Baseline Setup
-- MC: The Monte Carlo method (MC) approximates the Shapley value by randomly sampling permutations of features. In the experiments, MC serves as a benchmark for approximating the Shapley value.
-- CC: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
-- CCN: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
-- S-SVARM: It is designed to approximate the Shapley value by sampling coalitions without relying on marginal contributions. <[S-SVARM method](https://github.com//kolpaczki//Approximating-the-Shapley-Value-without-Marginal-Contributions)>
-  
 
 ## Repository Structure
+### Repository Root Directory
+- src: The directory where the project's source code is stored.
+- dataset: A directory for datasets used by this project.
+- command: A directory containing scripts for running the application or other related commands.
+- nohup.out: A log file capturing the output of a command run in the background using nohup.
+- pom.xml: The Maven project configuration file that defines project dependencies, build settings, and other metadata.
+
 ### Folders
-- Compared_algorithm: the 
-- Game:
-- Global: 
-- Structure: Maintain the data structures for FLASH. 
+- src/main/java/AlgoVersion: A folder houseing all the algorithm-related code for this project. 
+- src/main/java/Game: It contains the implementation of the game structure, utility functions and the mechanism to compute the Shapley value.
+- src/main/java/Global: A directory for global variables and declarations that are shared across the project, providing a centralized place for common configurations and constants.
+- src/main/java/Structure: A folder dedicated to the data structures used in FLASH. 
 
 ### Files
 - main.java: All algorithms are implemented in 'main.java'
 - Game/GameClass.java: The global initialization and experimental setup.
 - Global/Info.java: All settings related to determinism.
+
+- ## Baseline Setup
+- MC: The Monte Carlo method (MC) approximates the Shapley value by randomly sampling permutations of features. In the experiments, MC serves as a benchmark for approximating the Shapley value.
+- CC: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- CCN: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- S-SVARM: It is designed to approximate the Shapley value by sampling coalitions without relying on marginal contributions. <[S-SVARM method](https://github.com//kolpaczki//Approximating-the-Shapley-Value-without-Marginal-Contributions)>
