@@ -54,7 +54,6 @@ public class S_SVARM {
             long time_2 = System.currentTimeMillis();
             sv_values[t] = shap_matrix;
 
-            // 计算误差
             double error_max = comp.computeMaxError(shap_matrix, this.exact);
             double error_ave = comp.computeAverageError(shap_matrix, this.exact, this.num_features);
 
@@ -124,7 +123,6 @@ public class S_SVARM {
             c_i_l_plus[i][s - 1] ++;
         }
 
-        //找A中不存在的元素
         ArrayList<Integer> notA = new ArrayList<>(players);
         notA.removeAll(A);
 
@@ -256,7 +254,7 @@ public class S_SVARM {
         }
     }
 
-    //TODO generate a random permutation
+    // generate a random permutation
     private ArrayList<Integer> permutation(ArrayList<Integer> list, Random PermutationGene) {
 
         ArrayList<Integer> perm = new ArrayList<>(list);
@@ -269,7 +267,7 @@ public class S_SVARM {
         return perm;
     }
 
-    //TODO  Exact_calculation:
+    // exact calculation
     //plus[i][0], plus[i][n-1], plus[i][n-2];  minus[i][1], minus[i][n-1]  exact_calculation();
     private void exact_calculation(GameClass game, String model, ArrayList<Integer> allPlayers) {
         int n = this.num_features;
