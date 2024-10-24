@@ -10,7 +10,7 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 ## Features
 - Model-agnostic 
 - Local interpretation
-- Dynamic Allocation
+- Dynamic allocation
 
 ## Implementation
 1. Prerequisites
@@ -41,18 +41,18 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 - pom.xml: The Maven project configuration file that defines project dependencies, build settings, and other metadata.
 
 ### Folders
-- src/main/java/AlgoVersion: A folder houseing all the algorithm-related code for this project. 
-- src/main/java/Game: It contains the implementation of the game structure, utility functions and the mechanism to compute the Shapley value.
-- src/main/java/Global: A directory for global variables and declarations that are shared across the project, providing a centralized place for common configurations and constants.
-- src/main/java/Structure: A folder dedicated to the data structures used in FLASH. 
+- `src/main/java/AlgoVersion`: A folder houseing all the algorithm-related code for this project. 
+- `src/main/java/Game`: It contains the implementation of the game structure, utility functions and the mechanism to compute the Shapley value.
+- `src/main/java/Global`: A directory for global variables and declarations that are shared across the project, providing a centralized place for common configurations and constants.
+- `src/main/java/Structure`: A folder dedicated to the data structures used in FLASH. 
 
 ### Files
-- main.java: All algorithms are implemented in 'main.java'
-- Game/GameClass.java: The global initialization and experimental setup.
-- Global/Info.java: All settings related to determinism.
+- `main.java`: All algorithms are implemented in 'main.java'
+- `Game/GameClass.java`: The global initialization and experimental setup.
+- `Global/Info.java`: All settings related to determinism.
 
 - ## Baseline Setup
 - MC: The Monte Carlo method (MC) approximates the Shapley value by randomly sampling permutations of features. In the experiments, MC serves as a benchmark for approximating the Shapley value.
-- CC: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
-- CCN: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN-Method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- CC: It reformulates Shapley value estimation by using complementary contributions, measuring the utility difference between a coalition and its complement. <[CC method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
+- CCN: Building on the CC method, CCN optimizes the sampling process using Neyman allocation. <[CCN method](https://github.com/ZJU-DIVER/ShapleyValueApproximation)>
 - S-SVARM: It is designed to approximate the Shapley value by sampling coalitions without relying on marginal contributions. <[S-SVARM method](https://github.com//kolpaczki//Approximating-the-Shapley-Value-without-Marginal-Contributions)>
