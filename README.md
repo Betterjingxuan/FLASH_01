@@ -25,13 +25,13 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 3. Compile and Run
 - Navigate to the project directory:
   ```bash
-   cd repository
+   cd FLASH
 - Compile the Java files
    ```java
-   javac Main.java
+   javac main.java
 - Run the application
   ```bash
-  java Main
+  java main
 
 ## Repository Structure
 ### Repository Root Directory
