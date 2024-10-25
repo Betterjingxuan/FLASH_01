@@ -17,12 +17,12 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 - Java Development Kit (JDK) version 8 or higher
 - An IDE (e.g., IntelliJ IDEA, Eclipse) or a text editor (e.g., VS Code)
   
-2. Clone the Repository
+2. Clone the repository
    To get a local copy of this repository, run the following command:
     ```bash
     git clone https://anonymous.4open.science/r/FLASH-7088/
 
-3. Compile and Run
+3. Compile and run
 - Navigate to the project directory:
   ```bash
    cd FLASH
