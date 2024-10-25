@@ -18,6 +18,7 @@ FLASH is a framework supporting model-agnostic interpretation via fast and relia
 - An IDE (e.g., IntelliJ IDEA, Eclipse) or a text editor (e.g., VS Code)
   
 2. Clone the repository
+   
    To get a local copy of this repository, run the following command:
     ```bash
     git clone https://anonymous.4open.science/r/FLASH-7088/
